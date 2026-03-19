@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,14 +20,16 @@ jobs:
           distribution: 'zulu'
           cache: gradle
 
-      - name: Install Gradle 8.4
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Generate Gradle Wrapper
         run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.4-bin.zip -P /tmp
-          unzip -q /tmp/gradle-8.4-bin.zip -d /opt
-          echo "/opt/gradle-8.4/bin" >> $GITHUB_PATH
+          gradle wrapper --gradle-version 8.4
+          chmod +x gradlew
 
       - name: Build Debug APK
-        run: gradle assembleDebug
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

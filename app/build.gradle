@@ -1,22 +1,33 @@
+plugins {
+    id 'com.android.application' version '8.1.4' apply false
+}
+
 apply plugin: 'com.android.application'
+
 android {
-    compileSdkVersion 34
+    namespace 'com.fizux.app'
+    compileSdk 34
+
     defaultConfig {
         applicationId "com.fizux.app"
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdk 21
+        targetSdk 34
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
-        release { minifyEnabled false }
-        debug { minifyEnabled false }
+        debug {
+            minifyEnabled false
+        }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
+
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
 }

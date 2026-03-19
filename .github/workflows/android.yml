@@ -15,31 +15,28 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
 
-      - uses: android-actions/setup-android@v3
-
-      - name: Setup structure and build
+      - name: Build APK
         run: |
-          mkdir -p app/src/main/java/com/fizux/app
-          mkdir -p app/src/main/res/values
-          mkdir -p app/src/main/res/xml
           mkdir -p app/src/main/res/mipmap-hdpi
-
-          [ -f AndroidManifest.xml ] && mv AndroidManifest.xml app/src/main/
-          [ -f MainActivity.java ] && mv MainActivity.java app/src/main/java/com/fizux/app/
-          [ -f strings.xml ] && mv strings.xml app/src/main/res/values/
-          [ -f styles.xml ] && mv styles.xml app/src/main/res/values/
-          [ -f network_security_config.xml ] && mv network_security_config.xml app/src/main/res/xml/
-          [ -f ic_launcher.png ] && mv ic_launcher.png app/src/main/res/mipmap-hdpi/
-
-          echo "=== Project structure ==="
-          find . -name "*.gradle" | head -10
-          find . -name "*.java" | head -10
-          echo "=== app/build.gradle ==="
-          cat app/build.gradle
-
-          gradle wrapper --gradle-version 8.4
+          mkdir -p app/src/main/res/mipmap-mdpi
+          mkdir -p app/src/main/res/mipmap-xhdpi
+          mkdir -p app/src/main/res/mipmap-xxhdpi
+          python3 -c "
+import struct,zlib
+def png(s):
+    r,g,b=201,168,76
+    raw=b''.join(b'\x00'+bytes([r,g,b]*s) for _ in range(s))
+    def c(n,d):
+        x=n+d
+        return struct.pack('>I',len(d))+x+struct.pack('>I',zlib.crc32(x)&0xffffffff)
+    return b'\x89PNG\r\n\x1a\n'+c(b'IHDR',struct.pack('>IIBBBBB',s,s,8,2,0,0,0))+c(b'IDAT',zlib.compress(raw))+c(b'IEND',b'')
+import os
+for f,s in [('mipmap-mdpi',48),('mipmap-hdpi',72),('mipmap-xhdpi',96),('mipmap-xxhdpi',144)]:
+    open(f'app/src/main/res/{f}/ic_launcher.png','wb').write(png(s))
+print('Icons created')
+"
           chmod +x gradlew
-          ./gradlew :app:assembleDebug --stacktrace
+          ./gradlew assembleDebug
 
       - uses: actions/upload-artifact@v4
         with:

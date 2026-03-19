@@ -1,4 +1,5 @@
 package com.fizux.app;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.webkit.WebView;
@@ -10,13 +11,20 @@ import android.view.WindowManager;
 import android.webkit.CookieManager;
 
 public class MainActivity extends Activity {
+
     private WebView webView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
+
         webView = new WebView(this);
         setContentView(webView);
+
         WebSettings s = webView.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
@@ -27,24 +35,40 @@ public class MainActivity extends Activity {
         s.setDisplayZoomControls(false);
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        // Always load fresh content - no cache
+        s.setCacheMode(WebSettings.LOAD_NO_CACHE);
+
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
+
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onPermissionRequest(PermissionRequest request) {
                 request.grant(request.getResources());
             }
         });
+
         webView.setWebViewClient(new WebViewClient());
+        
+        // Clear cache then load
+        webView.clearCache(true);
         webView.loadUrl("https://mrsdolfin-lang.github.io/FIZUX/");
     }
+
     @Override
     public void onBackPressed() {
         if (webView.canGoBack()) webView.goBack();
         else super.onBackPressed();
     }
+
     @Override
-    protected void onResume() { super.onResume(); webView.onResume(); }
+    protected void onResume() {
+        super.onResume();
+        webView.onResume();
+        // Reload on every resume to get latest updates
+        webView.reload();
+    }
+
     @Override
     protected void onPause() { super.onPause(); webView.onPause(); }
-}
+                             }

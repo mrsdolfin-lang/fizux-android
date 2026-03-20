@@ -35,8 +35,6 @@ public class MainActivity extends Activity {
         s.setDisplayZoomControls(false);
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        // Always load fresh content - no cache
-        s.setCacheMode(WebSettings.LOAD_NO_CACHE);
 
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
@@ -49,8 +47,6 @@ public class MainActivity extends Activity {
         });
 
         webView.setWebViewClient(new WebViewClient());
-        
-        // Clear cache then load
         webView.clearCache(true);
         webView.loadUrl("https://mrsdolfin-lang.github.io/FIZUX/");
     }
@@ -62,13 +58,8 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        webView.onResume();
-        // Reload on every resume to get latest updates
-        webView.reload();
-    }
+    protected void onResume() { super.onResume(); webView.onResume(); webView.reload(); }
 
     @Override
     protected void onPause() { super.onPause(); webView.onPause(); }
-                             }
+}

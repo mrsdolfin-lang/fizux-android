@@ -1,4 +1,5 @@
 name: Build FIZUX APK
+
 on:
   push:
     branches: [ main ]
@@ -24,9 +25,7 @@ jobs:
           chmod +x gradlew
 
       - name: Create Icons
-        run: |
-          mkdir -p app/src/main/res/mipmap-mdpi app/src/main/res/mipmap-hdpi app/src/main/res/mipmap-xhdpi app/src/main/res/mipmap-xxhdpi
-          python3 -c "import struct,zlib;p=lambda s:(lambda r,g,b,raw:(lambda c:b'\x89PNG\r\n\x1a\n'+c(b'IHDR',struct.pack('>II',s,s)+b'\x08\x02\x00\x00\x00')+c(b'IDAT',zlib.compress(raw,9))+c(b'IEND',b''))(lambda t,d:(lambda x:struct.pack('>I',len(d))+x+struct.pack('>I',zlib.crc32(x)&0xffffffff))(t+d)))(201,168,76,b''.join(b'\x00'+bytes([201,168,76]*s) for _ in range(s)));[open(f'app/src/main/res/mipmap-{f}/ic_launcher.png','wb').write(p(s)) for f,s in [('mdpi',48),('hdpi',72),('xhdpi',96),('xxhdpi',144)]];print('Icons created')"
+        run: python3 create_icons.py
 
       - name: Build APK
         run: ./gradlew assembleDebug

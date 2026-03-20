@@ -6,16 +6,16 @@ repositories {
 }
 
 android {
-    namespace 'com.fizux.app'
-    compileSdk 34
+    compileSdkVersion 34
     defaultConfig {
         applicationId "com.fizux.app"
-        minSdk 21
-        targetSdk 34
+        minSdkVersion 21
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
     }
     buildTypes {
+        release { minifyEnabled false }
         debug { minifyEnabled false }
     }
     compileOptions {
